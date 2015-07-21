@@ -1,9 +1,9 @@
 from rest_framework import viewsets, generics
-from rest_framework.authentication import TokenAuthentication
+from rest_framework.authentication import TokenAuthentication, SessionAuthentication
 from rest_framework.permissions import IsAuthenticated
 from api_.serializers import LinkSerializer, UserSerializer, ContactSerializer
 from api_.models import Link, Contact
-from api_.permissions import IsActive
+from api_.permissions import IsActive, CanLogin
 from django.contrib.auth.models import User
 from djoser.views import RegistrationView, LoginView
 
@@ -12,9 +12,6 @@ class CustomRegistrationView(RegistrationView):
     def get_serializer_class(self):
         return UserSerializer
 
-class CustomLoginView(LoginView):
-    
-    permission_classes = (IsActive, )
 
 class LinkViewSet(viewsets.ModelViewSet):
     queryset = Link.objects.all()
