@@ -15,17 +15,27 @@ Including another URLconf
 """
 from django.conf.urls import include, url
 from django.contrib import admin
+from django.views.decorators.csrf import csrf_exempt
 from rest_framework import routers
 from api_.views import LinkViewSet,ContactViewSet, CustomRegistrationView, CustomLoginView
+from aggro_links.views import activation_frontend
 from rest_framework.authtoken import views
+from djoser.views import LoginView, LogoutView, ActivationView, UserView
+
 
 router = routers.DefaultRouter()
 router.register(r'links', LinkViewSet)
 #router.register(r'users', UserViewSet)
 router.register(r'contacts', ContactViewSet)
-urlpatterns = [
-    #url(r'^admin/', include(admin.site.urls)),
-    #url(r'^users/$', UserList.as_view()),
+
+urlpatterns = []
+authpatterns = [
     url(r'^auth/register/$', CustomRegistrationView.as_view()), 
-    url(r'^auth/login/$', CustomLoginView.as_view()), 
+    url(r'^auth/login/$', LoginView.as_view()), 
+    url(r'^auth/activate/', ActivationView.as_view()), 
+    url(r'^auth/activate_front/(?P<uid>\w{3})\/(?P<token>.*)', activation_frontend), 
+    url(r'^auth/logout/$', LogoutView.as_view()), 
+    url(r'^auth/me/$', UserView.as_view()), 
 ]
+
+urlpatterns += authpatterns
