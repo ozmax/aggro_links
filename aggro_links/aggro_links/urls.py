@@ -1,41 +1,45 @@
-"""aggro_links URL Configuration
-
-The `urlpatterns` list routes URLs to views. For more information please see:
-    https://docs.djangoproject.com/en/1.8/topics/http/urls/
-Examples:
-Function views
-    1. Add an import:  from my_app import views
-    2. Add a URL to urlpatterns:  url(r'^$', views.home, name='home')
-Class-based views
-    1. Add an import:  from other_app.views import Home
-    2. Add a URL to urlpatterns:  url(r'^$', Home.as_view(), name='home')
-Including another URLconf
-    1. Add an import:  from blog import urls as blog_urls
-    2. Add a URL to urlpatterns:  url(r'^blog/', include(blog_urls))
-"""
-from django.conf.urls import include, url
-from django.contrib import admin
-from django.views.decorators.csrf import csrf_exempt
+from django.conf.urls import url
 from rest_framework import routers
-from api_.views import LinkViewSet,ContactViewSet, CustomRegistrationView, CustomLoginView
+from api_.views import LinkViewSet, ContactViewSet, \
+    CustomRegistrationView, CustomRootView
 from aggro_links.views import activation_frontend
-from rest_framework.authtoken import views
 from djoser.views import LoginView, LogoutView, ActivationView, UserView
 
 
 router = routers.DefaultRouter()
 router.register(r'links', LinkViewSet)
-#router.register(r'users', UserViewSet)
 router.register(r'contacts', ContactViewSet)
 
 urlpatterns = []
 authpatterns = [
-    url(r'^auth/register/$', CustomRegistrationView.as_view()), 
-    url(r'^auth/login/$', LoginView.as_view()), 
-    url(r'^auth/activate/', ActivationView.as_view()), 
-    url(r'^auth/activate_front/(?P<uid>\w{3})\/(?P<token>.*)', activation_frontend), 
-    url(r'^auth/logout/$', LogoutView.as_view()), 
-    url(r'^auth/me/$', UserView.as_view()), 
+    url(
+        r'^auth/$',
+        CustomRootView.as_view(),
+        name='auth_home'),
+    url(
+        r'^auth/me/$',
+        UserView.as_view(),
+        name='user'),
+    url(
+        r'^auth/register/$',
+        CustomRegistrationView.as_view(),
+        name='register'),
+    url(
+        r'^auth/activate/',
+        ActivationView.as_view(),
+        name='activate'),
+    url(
+        r'^auth/activate_front/(?P<uid>\w{2,3})\/(?P<token>.*)',
+        activation_frontend,
+        name='activate_front'),
+    url(
+        r'^auth/login/$',
+        LoginView.as_view(),
+        name='login'),
+    url(
+        r'^auth/logout/$',
+        LogoutView.as_view(),
+        name='logout'),
 ]
 
 urlpatterns += authpatterns

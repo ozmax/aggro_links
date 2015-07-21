@@ -123,11 +123,18 @@ EMAIL_USE_TLS = True
 
 # djoser settings
 DJOSER = {
-    'DOMAIN': 'no domain',
-    'SITE_NAME': 'foo site',
-    'PASSWORD_RESET_CONFIRM_URL': '#/password/reset/confirm/{uid}/{token}',
-    'ACTIVATION_URL': 'auth/activate/{uid}/{token}',
+    'DOMAIN': 'ozmaxplanet.com:8000',
+    'SITE_NAME': 'ozmax api site',
+     # 'PASSWORD_RESET_CONFIRM_URL': '#/password/reset/confirm/{uid}/{token}',
+    'ACTIVATION_URL': 'auth/activate_front/{uid}/{token}',
     'SEND_ACTIVATION_EMAIL': True,
 }
+# auth api documentation
+ROOT_VIEW_URLS_MAPPING = {
+    'User info': 'user',
+    'Registration': 'register',
+    'Login': 'login',
+    'Logout': 'logout',
+    }
 
 from local_settings import *
