@@ -57,3 +57,7 @@ docs/_build/
 target/
 
 *.swp
+*.swo
+
+# sqlite3 db
+*.sqlite3
