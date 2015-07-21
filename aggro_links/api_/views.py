@@ -1,16 +1,31 @@
-from rest_framework import viewsets, generics
-from rest_framework.authentication import TokenAuthentication, SessionAuthentication
-from rest_framework.permissions import IsAuthenticated
+from rest_framework import viewsets
+from rest_framework.response import Response
 from api_.serializers import LinkSerializer, UserSerializer, ContactSerializer
 from api_.models import Link, Contact
-from api_.permissions import IsActive, CanLogin
-from django.contrib.auth.models import User
-from djoser.views import RegistrationView, LoginView
+from djoser.views import RegistrationView, RootView
+from django.conf import settings
+from rest_framework.reverse import reverse
 
 
 class CustomRegistrationView(RegistrationView):
     def get_serializer_class(self):
         return UserSerializer
+
+
+class CustomRootView(RootView):
+
+    urls_mapping = {}
+
+    def get_urls_mapping(self, **kwargs):
+        mapping = {}
+        mapping.update(settings.ROOT_VIEW_URLS_MAPPING)
+        return mapping
+
+    def get(self, request, format=None):
+        return Response(
+            dict([(key, reverse(url_name, request=request, format=format))
+                  for key, url_name in self.get_urls_mapping().items()])
+        )
 
 
 class LinkViewSet(viewsets.ModelViewSet):
