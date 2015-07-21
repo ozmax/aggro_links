@@ -3,7 +3,6 @@ from django.contrib.auth.models import User
 from rest_framework import serializers
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.authtoken.models import Token
-
 from api_.models import Link, Contact
 
 class UserSerializer(serializers.HyperlinkedModelSerializer):
@@ -15,8 +14,9 @@ class UserSerializer(serializers.HyperlinkedModelSerializer):
         read_only_fields = ('is_active',)
 
     def create(self, validated_data):
-        user = User.objects.create(**validated_data)
+        user = User.objects.create_user(**validated_data)
         user.is_active = False
+        user.save()
         Token.objects.create(user=user)
         return user
 
