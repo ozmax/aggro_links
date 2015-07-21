@@ -126,6 +126,8 @@ DJOSER = {
     'DOMAIN': 'no domain',
     'SITE_NAME': 'foo site',
     'PASSWORD_RESET_CONFIRM_URL': '#/password/reset/confirm/{uid}/{token}',
-    'ACTIVATION_URL': '#/activate/{uid}/{token}',
+    'ACTIVATION_URL': 'auth/activate/{uid}/{token}',
     'SEND_ACTIVATION_EMAIL': True,
 }
+
+from local_settings import *
