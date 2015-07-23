@@ -39,6 +39,11 @@ class LinkViewSet(viewsets.ModelViewSet):
         serializer = LinkSerializer(queryset, many=True)
         return Response(serializer.data)
 
+    def retrieve(self, request, pk=None):
+        queryset = Link.objects.get(id=pk)
+        if queryset.user == request.user
+            pass
+
 
 class ContactViewSet(viewsets.ModelViewSet):
     queryset = Contact.objects.all()
