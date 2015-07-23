@@ -1,4 +1,4 @@
-from django.conf.urls import url
+from django.conf.urls import url, include
 from rest_framework import routers
 from api_.views import LinkViewSet, ContactViewSet, \
     CustomRegistrationView, CustomRootView
@@ -10,7 +10,9 @@ router = routers.DefaultRouter()
 router.register(r'links', LinkViewSet)
 router.register(r'contacts', ContactViewSet)
 
-urlpatterns = []
+urlpatterns = [
+    url(r'^', include(router.urls)),
+]
 authpatterns = [
     url(
         r'^auth/$',

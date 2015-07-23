@@ -1,5 +1,6 @@
 from rest_framework import viewsets
 from rest_framework.response import Response
+from rest_framework.permissions import IsAuthenticated
 from api_.serializers import LinkSerializer, UserSerializer, ContactSerializer
 from api_.models import Link, Contact
 from djoser.views import RegistrationView, RootView
@@ -31,6 +32,12 @@ class CustomRootView(RootView):
 class LinkViewSet(viewsets.ModelViewSet):
     queryset = Link.objects.all()
     serializer_class = LinkSerializer
+    permission_classes = (IsAuthenticated, )
+
+    def list(self, request):
+        queryset = Link.objects.filter(user=request.user)
+        serializer = LinkSerializer(queryset, many=True)
+        return Response(serializer.data)
 
 
 class ContactViewSet(viewsets.ModelViewSet):

@@ -1,3 +1,5 @@
+import datetime
+
 from django.contrib.auth.models import User
 
 from rest_framework import serializers
@@ -25,8 +27,14 @@ class UserSerializer(serializers.HyperlinkedModelSerializer):
 class LinkSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Link
-        fields = ('id', 'entry_date', 'text')
+        fields = ('id', 'entry_date', 'url')
+        read_only_fields = ('entry_date', )
 
+    def create(self, validated_data):
+        user = self.context['request'].user
+        entry_date = datetime.datetime.now()
+        link = Link.objects.create(user=user, entry_date=entry_date, **validated_data)
+        return link
 
 class ContactSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
