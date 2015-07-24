@@ -50,3 +50,8 @@ class ContactSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Contact
         fields = ('id', 'full_name', 'email')
+
+    def create(self, validated_data):
+        user = self.context['request'].user
+        contact = Contact.objects.create(owner=user, **validated_data)
+        return contact
