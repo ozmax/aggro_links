@@ -1,6 +1,6 @@
 from django.conf.urls import url, include
 from rest_framework import routers
-from api_.views import LinkViewSet, ContactViewSet, \
+from api_.views import LinkViewSet, ContactViewSet, CategoryViewSet, \
     CustomRegistrationView, CustomRootView
 from aggro_links.views import activation_frontend
 from djoser.views import LoginView, LogoutView, ActivationView, UserView
@@ -9,6 +9,7 @@ from djoser.views import LoginView, LogoutView, ActivationView, UserView
 router = routers.DefaultRouter()
 router.register(r'links', LinkViewSet)
 router.register(r'contacts', ContactViewSet)
+router.register(r'categories', CategoryViewSet)
 
 urlpatterns = [
     url(r'^', include(router.urls)),

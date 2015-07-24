@@ -4,7 +4,7 @@ from django.contrib.auth.models import User
 
 from rest_framework import serializers
 from rest_framework.authtoken.models import Token
-from api_.models import Link, Contact
+from api_.models import Link, Category, Contact
 
 
 class UserSerializer(serializers.HyperlinkedModelSerializer):
@@ -33,8 +33,18 @@ class LinkSerializer(serializers.HyperlinkedModelSerializer):
     def create(self, validated_data):
         user = self.context['request'].user
         entry_date = datetime.datetime.now()
-        link = Link.objects.create(user=user, entry_date=entry_date, **validated_data)
+        link = Link.objects.create(owner=user, entry_date=entry_date, **validated_data)
         return link
+
+class CategorySerializer(serializers.HyperlinkedModelSerializer):
+    class Meta:
+        model = Category
+        fields = ('name', )
+
+    def create(self, validated_data):
+        user = self.context['request'].user
+        category = Category.objects.create(owner=user, **validated_data)
+        return category
 
 class ContactSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
