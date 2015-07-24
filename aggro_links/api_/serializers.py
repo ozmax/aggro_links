@@ -24,17 +24,6 @@ class UserSerializer(serializers.HyperlinkedModelSerializer):
         return user
 
 
-class LinkSerializer(serializers.HyperlinkedModelSerializer):
-    class Meta:
-        model = Link
-        fields = ('id', 'entry_date', 'url')
-        read_only_fields = ('entry_date', )
-
-    def create(self, validated_data):
-        user = self.context['request'].user
-        entry_date = datetime.datetime.now()
-        link = Link.objects.create(owner=user, entry_date=entry_date, **validated_data)
-        return link
 
 class CategorySerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
@@ -45,6 +34,28 @@ class CategorySerializer(serializers.HyperlinkedModelSerializer):
         user = self.context['request'].user
         category = Category.objects.create(owner=user, **validated_data)
         return category
+
+
+class LinkSerializer(serializers.ModelSerializer):
+    categories = serializers.SerializerMethodField()
+    #categories = CategorySerializer(many=True)
+    class Meta:
+        model = Link
+        fields = ('id', 'entry_date', 'url', 'categories')
+        read_only_fields = ('entry_date', )
+
+    def create(self, validated_data):
+        user = self.context['request'].user
+        entry_date = datetime.datetime.now()
+        link = Link.objects.create(owner=user, entry_date=entry_date, **validated_data)
+        return link
+
+    def get_categories(self, obj):
+        owner = obj.owner
+        queryset = obj.categories
+        serializer = CategorySerializer(queryset, many=True)
+        return serializer.data
+
 
 class ContactSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
