@@ -24,11 +24,11 @@ class UserSerializer(serializers.HyperlinkedModelSerializer):
         return user
 
 
-
 class CategorySerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Category
-        fields = ('name', )
+        fields = ('id', 'name', )
+        read_only_fields = ('id')
 
     def create(self, validated_data):
         user = self.context['request'].user
@@ -36,26 +36,39 @@ class CategorySerializer(serializers.HyperlinkedModelSerializer):
         return category
 
 
+class CategoryListingField(serializers.RelatedField):
+
+    def to_representation(self, value):
+        user = self.context['view'].request.user
+        if value.owner==user and isinstance(value, Category):
+            serializer = CategorySerializer(value)
+            return serializer.data
+
+    def to_internal_value(self, data):
+        print data
+        print 'in internal value'
+        return ['bar', 'foo']
+
 class LinkSerializer(serializers.ModelSerializer):
-    categories = serializers.SerializerMethodField()
-    #categories = CategorySerializer(many=True)
+
+    categories = CategoryListingField(
+        queryset=Category.objects.all(),
+        many=True,
+        required=False,
+    )
+
     class Meta:
         model = Link
         fields = ('id', 'entry_date', 'url', 'categories')
-        read_only_fields = ('entry_date', )
+        read_only_fields = ('id', 'entry_date', )
 
     def create(self, validated_data):
+        print validated_data
+
         user = self.context['request'].user
         entry_date = datetime.datetime.now()
         link = Link.objects.create(owner=user, entry_date=entry_date, **validated_data)
         return link
-
-    def get_categories(self, obj):
-        owner = obj.owner
-        queryset = obj.categories
-        serializer = CategorySerializer(queryset, many=True)
-        return serializer.data
-
 
 class ContactSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
