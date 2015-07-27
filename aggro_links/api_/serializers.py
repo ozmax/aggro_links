@@ -45,9 +45,13 @@ class CategoryListingField(serializers.RelatedField):
             return serializer.data
 
     def to_internal_value(self, data):
-        print data
-        print 'in internal value'
-        return ['bar', 'foo']
+        cats = []
+        if data:
+            for id in data.split(','):
+                cat = Category.objects.filter(id=int(id))
+                if cat:
+                    cats.append(cat[0])
+        return cats
 
 class LinkSerializer(serializers.ModelSerializer):
 
@@ -63,11 +67,14 @@ class LinkSerializer(serializers.ModelSerializer):
         read_only_fields = ('id', 'entry_date', )
 
     def create(self, validated_data):
-        print validated_data
-
+        if 'categories' in validated_data:
+            cats = validated_data.pop('categories')
         user = self.context['request'].user
         entry_date = datetime.datetime.now()
         link = Link.objects.create(owner=user, entry_date=entry_date, **validated_data)
+        if cats:
+            for cat in cats[0]:
+                link.categories.add(cat)
         return link
 
 class ContactSerializer(serializers.HyperlinkedModelSerializer):
