@@ -1,11 +1,13 @@
+from django.conf import settings
 from rest_framework import viewsets
 from rest_framework.response import Response
+from rest_framework.reverse import reverse
+from djoser.views import RegistrationView, RootView
+
+from api_.models import Link, Contact, Category
+from api_.metadata import LinkMetaData
 from api_.serializers import LinkSerializer, UserSerializer, \
     ContactSerializer, CategorySerializer
-from api_.models import Link, Contact, Category
-from djoser.views import RegistrationView, RootView
-from django.conf import settings
-from rest_framework.reverse import reverse
 
 
 class CustomRegistrationView(RegistrationView):
@@ -32,6 +34,7 @@ class CustomRootView(RootView):
 class LinkViewSet(viewsets.ModelViewSet):
     queryset = Link.objects.all()
     serializer_class = LinkSerializer
+    metadata_class = LinkMetaData
 
 
 class CategoryViewSet(viewsets.ModelViewSet):
