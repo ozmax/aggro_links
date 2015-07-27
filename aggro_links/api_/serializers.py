@@ -9,7 +9,7 @@ from api_.models import Link, Category, Contact
 
 class UserSerializer(serializers.HyperlinkedModelSerializer):
     email = serializers.EmailField(allow_blank=False)
-
+    
     class Meta:
         model = User
         fields = ('first_name', 'last_name', 'password', 'username', 'email')
@@ -22,6 +22,13 @@ class UserSerializer(serializers.HyperlinkedModelSerializer):
         user.save()
         Token.objects.create(user=user)
         return user
+
+    def validate_email(self, value):
+        try:
+            User.objects.get(email=value)
+            raise serializers.ValidationError("This email is already registered.")
+        except User.DoesNotExist:
+            return value
 
 
 class CategorySerializer(serializers.HyperlinkedModelSerializer):

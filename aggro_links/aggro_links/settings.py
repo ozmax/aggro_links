@@ -140,4 +140,8 @@ ROOT_VIEW_URLS_MAPPING = {
     'Logout': 'logout',
     }
 
+#fix user model enforce unique mail
+from django.contrib.auth.models import User
+User._meta.get_field('email')._unique = True
+
 from local_settings import *
