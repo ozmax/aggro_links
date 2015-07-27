@@ -6,15 +6,19 @@ class Category(models.Model):
     name = models.CharField(max_length=50)
     owner = models.ForeignKey(User)
 
+    def __str__(self):
+        return self.name
+
 
 class Link(models.Model):
     entry_date = models.DateTimeField()
     url = models.URLField(max_length=500)
     owner = models.ForeignKey(User)
-    categories = models.ManyToManyField(Category)
+    categories = models.ManyToManyField(Category, blank=False)
 
 
 class Contact(models.Model):
     full_name = models.CharField(max_length=100)
     email = models.CharField(max_length=100)
     owner = models.ForeignKey(User)
+
