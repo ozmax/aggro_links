@@ -3,12 +3,17 @@ import datetime
 from django.contrib.auth.models import User
 
 from rest_framework import serializers
+from rest_framework.validators import UniqueValidator
 from rest_framework.authtoken.models import Token
 from api_.models import Link, Category, Contact
 
 
 class UserSerializer(serializers.HyperlinkedModelSerializer):
-    email = serializers.EmailField(allow_blank=False)
+    email = serializers.EmailField(
+        allow_blank=False,
+        validators=[UniqueValidator(queryset=User.objects.all(),
+                                    message="This email is already registered.")]
+        )
     
     class Meta:
         model = User
@@ -22,13 +27,6 @@ class UserSerializer(serializers.HyperlinkedModelSerializer):
         user.save()
         Token.objects.create(user=user)
         return user
-
-    def validate_email(self, value):
-        try:
-            User.objects.get(email=value)
-            raise serializers.ValidationError("This email is already registered.")
-        except User.DoesNotExist:
-            return value
 
 
 class CategorySerializer(serializers.HyperlinkedModelSerializer):
