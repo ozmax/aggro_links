@@ -32,7 +32,6 @@ class LinkMetaData(SimpleMetadata):
             field_info['choices'] = []
             for data, junk in field.choices.items():
                 if data and (data != 'None'):
-                    print data
                     data = ast.literal_eval(data)
                     field_info['choices'].append(
                         {
