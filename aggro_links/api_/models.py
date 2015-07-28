@@ -18,15 +18,15 @@ class Link(models.Model):
 
 
 class Group(models.Model):
-    group_name = models.CharField(max_length=150)
+    name = models.CharField(max_length=150)
     owner = models.ForeignKey(User)
-
-    def __str__(self):
-        return self.group_name
 
 
 class Contact(models.Model):
     full_name = models.CharField(max_length=100)
     email = models.CharField(max_length=100)
     owner = models.ForeignKey(User)
-    groups = models.ManyToManyField(Group, null=True, blank=True)
+    groups = models.ManyToManyField(Group, blank=True)
+
+    def __str__(self):
+        return self.name

@@ -45,6 +45,7 @@ class CategoryViewSet(viewsets.ModelViewSet):
 class ContactViewSet(viewsets.ModelViewSet):
     queryset = Contact.objects.all()
     serializer_class = ContactSerializer
+    metadata_class = LinkMetaData
 
 class GroupViewSet(viewsets.ModelViewSet):
     queryset = Group.objects.all()

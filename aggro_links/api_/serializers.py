@@ -33,7 +33,7 @@ class CategorySerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Category
         fields = ('id', 'name', )
-        read_only_fields = ('id')
+        read_only_fields = ('id',)
 
     def create(self, validated_data):
         user = self.context['request'].user
@@ -84,24 +84,56 @@ class LinkSerializer(serializers.ModelSerializer):
         return link
 
 
-class ContactSerializer(serializers.HyperlinkedModelSerializer):
-    email = serializers.EmailField()
-    class Meta:
-        model = Contact
-        fields = ('id', 'full_name', 'email')
-
-    def create(self, validated_data):
-        user = self.context['request'].user
-        contact = Contact.objects.create(owner=user, **validated_data)
-        return contact
-
-
 class GroupSerializer(serializers.ModelSerializer):
     class Meta:
         model = Group
-        fields = ("group_name",)
+        fields = ('id', 'name', )
+        read_only_fields = ('id',)
     
     def create(self, validated_data):
         user = self.context['request'].user
         group = Group.objects.create(owner=user, **validated_data)
         return group
+
+
+class GroupListingField(serializers.RelatedField):
+
+    def to_representation(self, value):
+        user = self.context['view'].request.user
+        if value.owner==user and isinstance(value, Group):
+            serializer = GroupSerializer(value)
+            return serializer.data
+
+    def to_internal_value(self, data):
+        groups = []
+        if data:
+            for id in data.split(','):
+                gr = Group.objects.filter(id=int(id))
+                if gr:
+                    groups.append(gr[0])
+        return groups
+
+
+class ContactSerializer(serializers.HyperlinkedModelSerializer):
+    groups = GroupListingField(
+        queryset=Group.objects.all(),
+        many=True,
+        required=False,
+    )
+    email = serializers.EmailField()
+    class Meta:
+        model = Contact
+        fields = ('id', 'full_name', 'email', 'groups')
+
+    def create(self, validated_data):
+        if 'groups' in validated_data:
+            groups = validated_data.pop('groups')
+        user = self.context['request'].user
+        print validated_data
+        contact = Contact.objects.create(owner=user, **validated_data)
+        for gr in groups[0]:
+            print gr
+            print type(gr)
+            contact.groups.add(gr)
+            print contact.groups.all()
+        return contact
