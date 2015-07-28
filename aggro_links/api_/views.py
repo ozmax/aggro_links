@@ -4,10 +4,10 @@ from rest_framework.response import Response
 from rest_framework.reverse import reverse
 from djoser.views import RegistrationView, RootView
 
-from api_.models import Link, Contact, Category
+from api_.models import Link, Contact, Category, Group
 from api_.metadata import LinkMetaData
 from api_.serializers import LinkSerializer, UserSerializer, \
-    ContactSerializer, CategorySerializer
+    ContactSerializer, CategorySerializer, GroupSerializer
 
 
 class CustomRegistrationView(RegistrationView):
@@ -45,3 +45,7 @@ class CategoryViewSet(viewsets.ModelViewSet):
 class ContactViewSet(viewsets.ModelViewSet):
     queryset = Contact.objects.all()
     serializer_class = ContactSerializer
+
+class GroupViewSet(viewsets.ModelViewSet):
+    queryset = Group.objects.all()
+    serializer_class = GroupSerializer

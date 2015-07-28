@@ -5,7 +5,7 @@ from django.contrib.auth.models import User
 from rest_framework import serializers
 from rest_framework.validators import UniqueValidator
 from rest_framework.authtoken.models import Token
-from api_.models import Link, Category, Contact
+from api_.models import Link, Category, Contact, Group
 
 
 class UserSerializer(serializers.HyperlinkedModelSerializer):
@@ -58,6 +58,7 @@ class CategoryListingField(serializers.RelatedField):
                     cats.append(cat[0])
         return cats
 
+
 class LinkSerializer(serializers.ModelSerializer):
 
     categories = CategoryListingField(
@@ -82,6 +83,7 @@ class LinkSerializer(serializers.ModelSerializer):
                 link.categories.add(cat)
         return link
 
+
 class ContactSerializer(serializers.HyperlinkedModelSerializer):
     email = serializers.EmailField()
     class Meta:
@@ -92,3 +94,14 @@ class ContactSerializer(serializers.HyperlinkedModelSerializer):
         user = self.context['request'].user
         contact = Contact.objects.create(owner=user, **validated_data)
         return contact
+
+
+class GroupSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Group
+        fields = ("group_name",)
+    
+    def create(self, validated_data):
+        user = self.context['request'].user
+        group = Group.objects.create(owner=user, **validated_data)
+        return group
