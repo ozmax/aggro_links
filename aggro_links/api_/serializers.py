@@ -11,10 +11,12 @@ from api_.models import Link, Category, Contact, Group
 class UserSerializer(serializers.HyperlinkedModelSerializer):
     email = serializers.EmailField(
         allow_blank=False,
-        validators=[UniqueValidator(queryset=User.objects.all(),
-                                    message="This email is already registered.")]
+        validators=[
+            UniqueValidator(
+                queryset=User.objects.all(),
+                message="This email is already registered.")]
         )
-    
+
     class Meta:
         model = User
         fields = ('first_name', 'last_name', 'password', 'username', 'email')
@@ -45,7 +47,7 @@ class CategoryListingField(serializers.RelatedField):
 
     def to_representation(self, value):
         user = self.context['view'].request.user
-        if value.owner==user and isinstance(value, Category):
+        if value.owner == user and isinstance(value, Category):
             serializer = CategorySerializer(value)
             return serializer.data
 
@@ -77,7 +79,9 @@ class LinkSerializer(serializers.ModelSerializer):
             cats = validated_data.pop('categories')
         user = self.context['request'].user
         entry_date = datetime.datetime.now()
-        link = Link.objects.create(owner=user, entry_date=entry_date, **validated_data)
+        link = Link.objects.create(owner=user,
+                                   entry_date=entry_date,
+                                   **validated_data)
         if cats:
             for cat in cats[0]:
                 link.categories.add(cat)
@@ -89,7 +93,7 @@ class GroupSerializer(serializers.ModelSerializer):
         model = Group
         fields = ('id', 'name', )
         read_only_fields = ('id',)
-    
+
     def create(self, validated_data):
         user = self.context['request'].user
         group = Group.objects.create(owner=user, **validated_data)
@@ -100,7 +104,7 @@ class GroupListingField(serializers.RelatedField):
 
     def to_representation(self, value):
         user = self.context['view'].request.user
-        if value.owner==user and isinstance(value, Group):
+        if value.owner == user and isinstance(value, Group):
             serializer = GroupSerializer(value)
             return serializer.data
 
@@ -121,6 +125,7 @@ class ContactSerializer(serializers.HyperlinkedModelSerializer):
         required=False,
     )
     email = serializers.EmailField()
+
     class Meta:
         model = Contact
         fields = ('id', 'full_name', 'email', 'groups')

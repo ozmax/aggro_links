@@ -47,6 +47,7 @@ class ContactViewSet(viewsets.ModelViewSet):
     serializer_class = ContactSerializer
     metadata_class = LinkMetaData
 
+
 class GroupViewSet(viewsets.ModelViewSet):
     queryset = Group.objects.all()
     serializer_class = GroupSerializer
