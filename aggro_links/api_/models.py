@@ -29,6 +29,4 @@ class Contact(models.Model):
     full_name = models.CharField(max_length=100)
     email = models.CharField(max_length=100)
     owner = models.ForeignKey(User)
-    group = models.ForeignKey(Group, null=True, blank=True)
-
-
+    groups = models.ManyToManyField(Group, null=True, blank=True)
