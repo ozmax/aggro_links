@@ -83,6 +83,7 @@ class LinkSerializer(serializers.ModelSerializer):
         return link
 
 class ContactSerializer(serializers.HyperlinkedModelSerializer):
+    email = serializers.EmailField()
     class Meta:
         model = Contact
         fields = ('id', 'full_name', 'email')
