@@ -136,9 +136,7 @@ class ContactSerializer(serializers.HyperlinkedModelSerializer):
         user = self.context['request'].user
         print validated_data
         contact = Contact.objects.create(owner=user, **validated_data)
-        for gr in groups[0]:
-            print gr
-            print type(gr)
-            contact.groups.add(gr)
-            print contact.groups.all()
+        if groups:
+            for gr in groups[0]:
+                contact.groups.add(gr)
         return contact
