@@ -52,13 +52,13 @@ class CategoryListingField(serializers.RelatedField):
             return serializer.data
 
     def to_internal_value(self, data):
-        cats = []
+        user = self.context['view'].request.user
         if data:
-            for id in data.split(','):
-                cat = Category.objects.filter(id=int(id))
-                if cat:
-                    cats.append(cat[0])
-        return cats
+            try:
+                cat = Category.objects.get(id=int(data), owner=user )
+            except Category.DoesNotExist:
+                cat = None
+        return cat
 
 
 class LinkSerializer(serializers.ModelSerializer):
@@ -83,8 +83,9 @@ class LinkSerializer(serializers.ModelSerializer):
                                    entry_date=entry_date,
                                    **validated_data)
         if cats:
-            for cat in cats[0]:
-                link.categories.add(cat)
+            for cat in cats:
+                if cat:
+                    link.categories.add(cat)
         return link
 
 
@@ -134,7 +135,6 @@ class ContactSerializer(serializers.HyperlinkedModelSerializer):
         if 'groups' in validated_data:
             groups = validated_data.pop('groups')
         user = self.context['request'].user
-        print validated_data
         contact = Contact.objects.create(owner=user, **validated_data)
         if groups:
             for gr in groups[0]:
