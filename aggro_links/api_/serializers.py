@@ -53,6 +53,7 @@ class CategoryListingField(serializers.RelatedField):
 
     def to_internal_value(self, data):
         user = self.context['view'].request.user
+        cat = None
         if data:
             try:
                 cat = Category.objects.get(id=int(data), owner=user )
@@ -110,14 +111,14 @@ class GroupListingField(serializers.RelatedField):
             return serializer.data
 
     def to_internal_value(self, data):
-        groups = []
+        user = self.context['view'].request.user
+        group = None
         if data:
-            for id in data.split(','):
-                gr = Group.objects.filter(id=int(id))
-                if gr:
-                    groups.append(gr[0])
-        return groups
-
+            try:
+                group = Group.objects.get(id=int(data), owner=user )
+            except Group.DoesNotExist:
+                group = None
+        return group
 
 class ContactSerializer(serializers.HyperlinkedModelSerializer):
     groups = GroupListingField(
@@ -132,11 +133,12 @@ class ContactSerializer(serializers.HyperlinkedModelSerializer):
         fields = ('id', 'full_name', 'email', 'groups')
 
     def create(self, validated_data):
+        groups = None
         if 'groups' in validated_data:
             groups = validated_data.pop('groups')
         user = self.context['request'].user
         contact = Contact.objects.create(owner=user, **validated_data)
         if groups:
-            for gr in groups[0]:
+            for gr in groups:
                 contact.groups.add(gr)
         return contact
