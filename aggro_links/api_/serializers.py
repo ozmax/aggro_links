@@ -7,6 +7,12 @@ from rest_framework.validators import UniqueValidator
 from rest_framework.authtoken.models import Token
 from api_.models import Link, Category, Contact, Group
 
+class UpdateUserSerializer(serializers.ModelSerializer):
+   
+    class Meta:
+        model = User
+        fields = ('id', 'username','email', 'first_name', 'last_name')
+        read_only_fields =('id', 'username','email' ) 
 
 class UserSerializer(serializers.HyperlinkedModelSerializer):
     email = serializers.EmailField(
@@ -19,9 +25,9 @@ class UserSerializer(serializers.HyperlinkedModelSerializer):
 
     class Meta:
         model = User
-        fields = ('first_name', 'last_name', 'password', 'username', 'email')
+        fields = ('id','is_active', 'first_name', 'last_name', 'password', 'username', 'email')
         write_only_fields = ('password',)
-        read_only_fields = ('is_active',)
+        read_only_fields = ('id', 'is_active',)
 
     def create(self, validated_data):
         user = User.objects.create_user(**validated_data)

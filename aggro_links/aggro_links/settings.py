@@ -129,8 +129,9 @@ EMAIL_USE_TLS = True
 # djoser settings
 DJOSER = {
     'DOMAIN': 'ozmaxplanet.com:8000',
-    'SITE_NAME': 'ozmax api site',
-     # 'PASSWORD_RESET_CONFIRM_URL': '#/password/reset/confirm/{uid}/{token}',
+    'SET_PASSWORD_RETYPE': True,
+    'SITE_NAME': 'aggro linkz',
+    'PASSWORD_RESET_CONFIRM_URL': '#/password/reset/confirm/{uid}/{token}',
     'ACTIVATION_URL': 'auth/activate_front/{uid}/{token}',
     'SEND_ACTIVATION_EMAIL': True,
 }
