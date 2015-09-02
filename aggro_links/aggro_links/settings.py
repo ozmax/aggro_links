@@ -128,10 +128,11 @@ EMAIL_USE_TLS = True
 
 # djoser settings
 DJOSER = {
-    'DOMAIN': 'ozmaxplanet.com:8000',
+    'DOMAIN': 'ozmax.github.io/new',
     'SET_PASSWORD_RETYPE': True,
+    'PASSWORD_RESET_CONFIRM_RETYPE': True,
     'SITE_NAME': 'aggro linkz',
-    'PASSWORD_RESET_CONFIRM_URL': '#/password/reset/confirm/{uid}/{token}',
+    'PASSWORD_RESET_CONFIRM_URL': '#/password/reset/{uid}/{token}',
     'ACTIVATION_URL': 'auth/activate_front/{uid}/{token}',
     'SEND_ACTIVATION_EMAIL': True,
 }
@@ -149,5 +150,15 @@ User._meta.get_field('email')._unique = True
 
 #cors headers
 CORS_ORIGIN_ALLOW_ALL = True
+CORS_ALLOW_HEADERS = (
+    'x-requested-with',
+    'content-type',
+    'accept',
+    'origin',
+    'authorization',
+    'x-csrftoken',
+    'accept-encoding',
+    'accept-language',
+)
 
 from local_settings import *
