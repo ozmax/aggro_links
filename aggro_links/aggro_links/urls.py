@@ -2,7 +2,7 @@ from django.conf.urls import url, include
 from rest_framework import routers
 from api_.views import LinkViewSet, ContactViewSet, CategoryViewSet, \
     CustomRegistrationView, CustomRootView, GroupViewSet, CustomUserView
-from aggro_links.views import activation_frontend
+from aggro_links.views import activation_frontend, google_login, oauth2_username
 from djoser.views import LoginView, LogoutView, ActivationView, UserView, \
     SetPasswordView, PasswordResetView, PasswordResetConfirmView
 
@@ -17,6 +17,7 @@ router.register(r'groups', GroupViewSet)
 urlpatterns = [
     url(r'^', include(router.urls)),
 ]
+
 authpatterns = [
     url(
         r'^auth/$',
@@ -60,4 +61,15 @@ authpatterns = [
         name='logout'),
 ]
 
-urlpatterns += authpatterns
+oauth2_patterns = [
+
+    url(
+        r'^auth/google/$',
+        google_login,
+        name='google_login'),
+    url(r'make_username/',
+        oauth2_username,
+        name="make_username"),
+]
+
+urlpatterns += authpatterns + oauth2_patterns
