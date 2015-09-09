@@ -5,11 +5,27 @@
 <body>
     <div style="margin-top:80px;">
         <div id="form-wrapper" style="width: 600px; margin: 0 auto; margin-top:180px;">
-            <form class="form" action="" method="POST">
-            {{form}}
-            {% csrf_token %}
-            <input type="submit" value="submit">
-            </form>
+            <div class="panel panel-primary">
+                <div class="panel-heading">
+                    Pick a username for aggro linkz
+                </div>
+                <div class="panel-body ">
+                    <form class="form" action="" method="POST">
+                        {% for field in form %}
+                            <div class="{% if field.errors%}has-error{% endif %}">
+                                {{field}}
+                                <span class="help-block">
+                                    {{field.errors}}
+                                </span>
+                            </div>
+                        {% endfor %}
+                        {% csrf_token %}
+                        <div class="row text-center">
+                            <button type="submit" class="btn btn-success">Submit</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
         </div>
     </div>
     </body>

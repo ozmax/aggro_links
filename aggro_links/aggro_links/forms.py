@@ -9,7 +9,6 @@ class UsernameForm(forms.Form):
     )
     
     def clean_username(self):
-        print 'i validate'
         username = self.cleaned_data['username']
         try:
             User.objects.get(username=username)
@@ -18,7 +17,6 @@ class UsernameForm(forms.Form):
             return username
 
     def save(self, email):
-        print 'saving'
         username = self.cleaned_data['username']
         u = User.objects.create_user(
             username=username,

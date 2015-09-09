@@ -2,7 +2,8 @@ from django.conf.urls import url, include
 from rest_framework import routers
 from api_.views import LinkViewSet, ContactViewSet, CategoryViewSet, \
     CustomRegistrationView, CustomRootView, GroupViewSet, CustomUserView
-from aggro_links.views import activation_frontend, google_login, oauth2_username
+from aggro_links.views import activation_frontend, oauth2_login, \
+    oauth2_username
 from djoser.views import LoginView, LogoutView, ActivationView, UserView, \
     SetPasswordView, PasswordResetView, PasswordResetConfirmView
 
@@ -64,10 +65,11 @@ authpatterns = [
 oauth2_patterns = [
 
     url(
-        r'^auth/google/$',
-        google_login,
-        name='google_login'),
-    url(r'make_username/',
+        r'^auth/oauth2/$',
+        oauth2_login,
+        name='oauth2_login'),
+    url(
+        r'make_username/',
         oauth2_username,
         name="make_username"),
 ]

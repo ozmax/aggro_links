@@ -11,8 +11,8 @@ from django.shortcuts import render, redirect
 
 from rest_framework.authtoken.models import Token
 
+from aggro_links.oauth2 import Oauth2
 from aggro_links.forms import UsernameForm
-
 
 @require_http_methods(["GET", ])
 def activation_frontend(request, uid=None, token=None):
@@ -31,33 +31,17 @@ def activation_frontend(request, uid=None, token=None):
             return HttpResponse(response.text)
 
 
-
 @require_http_methods(["GET", ])
-def google_login(request):
+def oauth2_login(request):
     code = request.GET.get('code', None)
-    exchange_url = "https://www.googleapis.com/oauth2/v4/token"
-    headers = {'content-type': 'application/x-www-form-urlencoded'}
-    data = {
-        'code': code,
-        'client_id': settings.GOOGLE_CLIENT_ID,
-        'client_secret': settings.GOOGLE_CLIENT_SECRET,
-        'redirect_uri': 'http://ozmaxplanet.com:8000/auth/google/',
-        'grant_type': 'authorization_code'
-    }
-    enc = urllib.urlencode(data)
-    response = requests.post(exchange_url, data=enc, headers=headers)
-    data = json.loads(response.content)
-    token = data['access_token']
-    headers = {'Authorization': 'Bearer '+token}
-    info_url = "https://www.googleapis.com/oauth2/v3/userinfo"
-    response = requests.get(info_url, headers=headers)
-    user_data = json.loads(response.content)
-    email = user_data['email']
+    state = request.GET.get('state', None)
+    g_oauth2 = Oauth2(code, state)
+    g_oauth2.do_oauth2()
+    email = g_oauth2.get_email()
     try:
         u = User.objects.get(email=email)
         token, _ = Token.objects.get_or_create(user=u)
         return redirect("http://ozmax.github.io/new/#/get_token?token={}".format(token))
-        #return redirect("http://localhost/~ozmax/ozmax.github.io/new/#/get_token?token={}".format(token))
     except User.DoesNotExist:
         request.session['email'] = email
         return redirect(reverse('make_username'))
@@ -67,11 +51,8 @@ def google_login(request):
 @require_http_methods(["GET", "POST" ])
 def oauth2_username(request):
     form = UsernameForm(request.POST or None)
-    print form
     email = request.session['email']
-    print request.method
     if form.is_valid():
-        print 'inside'
         inst = form.save(email)
         token, _ = Token.objects.get_or_create(user=inst)
         #redirect to client **for now
