@@ -40,7 +40,7 @@ class UserSerializer(serializers.HyperlinkedModelSerializer):
 class CategorySerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Category
-        fields = ('id', 'name', )
+        fields = ('id', 'name', 'link_count' )
         read_only_fields = ('id',)
 
     def create(self, validated_data):

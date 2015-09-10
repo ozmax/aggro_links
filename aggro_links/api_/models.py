@@ -9,6 +9,10 @@ class Category(models.Model):
     def __str__(self):
         return self.name
 
+    @property
+    def link_count(self):
+        return self.link_set.all().count()
+
 
 class Link(models.Model):
     entry_date = models.DateTimeField()
