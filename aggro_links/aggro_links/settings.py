@@ -148,6 +148,10 @@ from django.contrib.auth.models import User
 User._meta.get_field('email')._unique = True
 
 #cors headers
+CORS_ORIGIN_WHITELIST = (
+    'ozmax.github.io',
+    'localhost'
+)
 CORS_ORIGIN_ALLOW_ALL = True
 CORS_ALLOW_HEADERS = (
     'x-requested-with',
