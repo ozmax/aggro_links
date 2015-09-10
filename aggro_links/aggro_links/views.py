@@ -44,6 +44,9 @@ def oauth2_login(request):
         return redirect("http://ozmax.github.io/new/#/get_token?token={}".format(token))
     except User.DoesNotExist:
         request.session['email'] = email
+        request.session['fname'] = g_oauth2.get_first_name()
+        request.session['lname'] = g_oauth2.get_last_name()
+
         return redirect(reverse('make_username'))
     return HttpResponse(response.content)
 
@@ -51,10 +54,15 @@ def oauth2_login(request):
 @require_http_methods(["GET", "POST" ])
 def oauth2_username(request):
     form = UsernameForm(request.POST or None)
-    email = request.session['email']
     if form.is_valid():
-        inst = form.save(email)
+        email = request.session['email']
+        fname = request.session['fname']
+        lname = request.session['lname']
+        inst = form.save(email, fname, lname)
         token, _ = Token.objects.get_or_create(user=inst)
+        del request.session['email']
+        del request.session['fname']
+        del request.session['lname']
         #redirect to client **for now
         return redirect("http://ozmax.github.io/new/#/get_token?token={}".format(token))
     tpl = 'aggro_links/username.html'

@@ -16,10 +16,14 @@ class UsernameForm(forms.Form):
         except User.DoesNotExist:
             return username
 
-    def save(self, email):
+    def save(self, email, fname, lname):
         username = self.cleaned_data['username']
+        print fname
+        print lname
         u = User.objects.create_user(
             username=username,
-            email=email
+            email=email,
+            first_name = fname,
+            last_name = lname,
             )
         return u

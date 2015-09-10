@@ -26,23 +26,33 @@ class Oauth2(object):
         }
         encoded_data = urllib.urlencode(exchange_data)
         response = requests.post(exchange_url, data=encoded_data, headers=self.headers)
-        print response.content
         data = json.loads(response.content)
         self.token = data['access_token']
 
     def get_user_info(self):
         if self.type == 'FB':
-            parameters = "?fields=email"
+            parameters = "?fields=email,first_name,last_name"
         else:
             parameters = ''
         headers = {'Authorization': 'Bearer {}'.format(self.token)}
         response = requests.get(self.info_url+parameters, headers=headers)
         user_data = json.loads(response.content)
-        email = user_data['email']
-        self.email = email
+        self.email = user_data.get('email')
+        if self.type == 'FB':
+            self.first_name = user_data.get('first_name')
+            self.last_name = user_data.get('last_name')
+        else:
+            self.first_name = user_data.get('given_name')
+            self.last_name = user_data.get('family_name')
 
     def get_email(self):
         return self.email
+
+    def get_first_name(self):
+        return self.first_name
+
+    def get_last_name(self):
+        return self.last_name
 
     def do_oauth2(self):
         self.exchange_code()
